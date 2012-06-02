@@ -46,21 +46,21 @@ public class Events extends HttpServlet {
 		String personBornQuery = "PREFIX ont: <http://dbpedia.org/ontology/> PREFIX foaf: <http://xmlns.com/foaf/0.1/> PREFIX xsd:    <http://www.w3.org/2001/XMLSchema#> SELECT ?page ?place ?name ?date WHERE {" + 
 				"?person ont:birthDate ?date; foaf:page ?page; ont:birthPlace ?place; foaf:name ?name ." + 
 				"FILTER( ( ( datatype(?date) = xsd:date ) || ( datatype(?date) = xsd:dateTime ) )  && ( regex(str(?date), \"" + date + "\") )&& (regex(str(?place),\"Australia\") || regex(str(?place),\"" + city + "\")) ) }";
-	URL url = new URL("http://dbpedia.org/sparql?default-graph-uri=http%3A%2F%2Fdbpedia.org&output=json&query=" + URLEncoder.encode(personBornQuery, "UTF-8")); 
-	HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-    conn.setRequestMethod("GET");
-    //conn.setRequestProperty("Accept", "application/json");
+		URL url = new URL("http://dbpedia.org/sparql?default-graph-uri=http%3A%2F%2Fdbpedia.org&output=json&query=" + URLEncoder.encode(personBornQuery, "UTF-8")); 
+		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+		conn.setRequestMethod("GET");
+		//conn.setRequestProperty("Accept", "application/json");
     
-    String line;
-    String result = "";
-    BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-    while ((line = rd.readLine()) != null) {
-       result += line;
-    }
-    rd.close();
-    out.print(result);
+	    String line;
+	    String result = "";
+	    BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+	    while ((line = rd.readLine()) != null) {
+	       result += line;
+	    }
+	    rd.close();
+	    // results may be alternate display names for same person, so will need to filter these out in client
+	    out.print(result);
 
-		//out.println("{api: 'events', year: '" + year + "'}");
 	}
 
 	/**
