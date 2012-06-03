@@ -49,6 +49,8 @@ var aditl = {
 				aditl.displayEvents(d);
 			}
 		});
+		
+		// NAA photos
 		$.ajax({
 			url: "Photosearch?date=" + formattedDate + "&keyword=" + location,
 			complete: function(d){
@@ -65,13 +67,15 @@ var aditl = {
 			}
 		});
 		
-		// ABS population
+		// ABS population - females
 		$.ajax({
 			url: "Population?date=" + formattedDate + "&state=" + state + "&gender=female",
 			success: function(d){
 				aditl.displayPopulationFemale(d);
 			}
 		});
+		
+		// ABS population - males
 		$.ajax({
 			url: "Population?date=" + formattedDate + "&state=" + state + "&gender=male",
 			success: function(d){
@@ -79,32 +83,34 @@ var aditl = {
 			}
 		});
 		
-		// BOM temperature
+		// BOM temperature - min
 		$.ajax({
 			url: "Temperature?date=" + formattedDate + "&state=" + state + "&minormax=min",
 			success: function(d){
 				aditl.displayTemperatureMin(d);
 			}
 		});
+		
+		// BOM temperature - max
 		$.ajax({
 			url: "Temperature?date=" + formattedDate + "&state=" + state + "&minormax=max",
 			success: function(d){
 				aditl.displayTemperatureMax(d);
 			}
 		});
-		/*$.ajax({
-			url: "?date=" + formattedDate,
+		$.ajax({
+			url: "PrimeMinister?date=" + formattedDate,
 			success: function(d){
 				aditl.displayGovFederal(d);
 			}
-		});*/
+		});
 		/*$.ajax({
 		url: "?date=" + formattedDate + "&state=" + state,
 		success: function(d){
 			aditl.displayGovState(d);
 		}
 	});*/
-		aditl.displayMusicCharts();
+		//aditl.displayMusicCharts();
 		
 		
 		
@@ -115,21 +121,27 @@ var aditl = {
 		$('.date-display').html($.format.date(date, 'dd MMMM yyyy') || "");
 		$('.year-display').html(date.getFullYear());
 		
-		// clear the slow loading results
-		$('#events-display').html(' ');
-		$('#stories-display').html(' ');
+		// display loading icons for the slow loading results
+		$('#events-display').html('<img src="assets/img/ajax-loader.gif">');
+		$('#stories-display').html('<img src="assets/img/ajax-loader.gif">');
     },
+    
     displayStories: function(data){
-    	//console.log("display stories",data);
     	try {
 			if (data){
-				var result = "Foo";
+				var result = "";
 				var stories = eval(data);
 				//console.log("data was ",data, "stories are",stories);
+				// randomly 
+				function randomOrder(){
+					return (Math.round(Math.random())-0.5);
+				}
+				stories.sort(randomOrder);
 				$(stories).each(function(i,d){
-					  var photourl = d.large_image_url;
+					  var photourl = d.largeImageUrl;
+					  if (!photourl) photourl = d.smallImageUrl;
 					  var caption = d.title;
-					  var link = d.stories_url;
+					  var link = "#";
 					  result +=
 						 '<div class="span3 item"><img class="thumbnail" src="' + 
 						 photourl +
@@ -141,13 +153,13 @@ var aditl = {
 						   
 				});
 				$('#stories-display').html(result);
-				var $container = $('#stories-display');
+				/*var $container = $('#stories-display');
 			    $container.imagesLoaded( function(){
 			        $container.masonry({
 			         itemSelector : '.item'
 			        });
 			        
-			      });
+			      });*/
 			} else {
 				$('#stories-display').html('No data');
 			}
@@ -185,12 +197,10 @@ var aditl = {
     },
     displayMusicCharts: function(data){
 		if (data){
+//		     '<img src="assets/img/glyphicons/glyphicons_017_music.png">'
 		} else {
 		    $('#music-display').html('--');
 		}
-	// assume data > song > title
-	//	$('#musicCharts').html(
-      //     '<img src="assets/img/glyphicons/glyphicons_017_music.png">'
 	
     },
     displayEvents: function(data){
@@ -213,9 +223,8 @@ var aditl = {
 						if (val.placelabel){
 							eventlabel += " in " + val.placelabel.value;
 						}
-						//console.log("got bindings",val);
 						if (!done[name]){
-							result += "<p>" + (link? "<a href='" + link + "'>" + name + "</a>" : name) + eventlabel + "</p>";
+							result += "<div>" + (link? "<a href='" + link + "'>" + name + "</a>" : name) + eventlabel + "</div>";
 						}
 						done[name] = true;
 					});
@@ -232,6 +241,12 @@ var aditl = {
     },
     displayGovFederal: function(data){
 		if (data){
+			var pmdata = eval(data);
+			//console.log(pmdata);
+			var pm = pmdata.ministry || "";
+			var party = pmdata.party || "";
+			
+			$('#gov-display').html("Federal: " + pm + ", " + party);
 		} else {
 		    $('#gov-display').html('--');
 		}
@@ -244,7 +259,7 @@ var aditl = {
     },
     displayPrice: function(data){
 		if (data){
-			// FIXME : multiple value to get price of loaf of bread
+			//  multiply value to get price of loaf of bread - $2.50 in 2012
 			var f = parseFloat(data) * 2.5;
 			f = f.toFixed(2);
 			$('#price-display').html('<img class="dataicon" src="assets/img/glyphicons/glyphicons_227_usd.png"> <div class="dataval">' + f + '</div>');

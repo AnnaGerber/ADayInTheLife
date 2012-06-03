@@ -41,8 +41,8 @@ public class Events extends HttpServlet {
 		
 		String date = request.getParameter("date"); // format must be yyyy-mm-dd
 		String city = request.getParameter("city");
-		// use dbpedia query to get events
 		
+		// use dbpedia query to get events (people born in same or similar location on the same day)
 		String personBornQuery = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX ont: <http://dbpedia.org/ontology/> PREFIX foaf: <http://xmlns.com/foaf/0.1/> PREFIX xsd:    <http://www.w3.org/2001/XMLSchema#> SELECT ?page ?place ?name ?date ?placelabel WHERE {" + 
 				"?person ont:birthDate ?date; foaf:page ?page; ont:birthPlace ?place; foaf:name ?name . ?place rdfs:label ?placelabel ." + 
 				"FILTER (lang(?placelabel) = \"en\") . FILTER( ( ( datatype(?date) = xsd:date ) || ( datatype(?date) = xsd:dateTime ) )  && ( regex(str(?date), \"" + date + "\") )&& (regex(str(?place),\"Australia\") || regex(str(?place),\"" + city + "\")) ) }";
