@@ -130,6 +130,7 @@ var aditl = {
 		$('.year-display').html(date.getFullYear());
 		
 		// display loading icons for the slow loading results
+		$('#gov-display').html('');
 		$('#events-display').html('<img src="assets/img/ajax-loader.gif">');
 		$('#stories-display').html('<img src="assets/img/ajax-loader.gif">');
     },
@@ -274,14 +275,18 @@ var aditl = {
     displayGovFederal: function(data){
 		if (data){
 			var pmdata = eval(data);
-			//console.log(pmdata);
-			var pm = pmdata.ministry || "";
-			var party = pmdata.party || "";
-			
-			$('#gov-display').html("<img class='dataicon' src='assets/img/glyphicons/glyphicons_263_bank.png'>  <span class='dataval'>" + pm + "</span><br/>" +
-					"<span style='font-size:small' class='dataval'>" + party + "</span>");
+			if (pmdata && pmdata.ministry){
+				//console.log(pmdata);
+				var pm = pmdata.ministry || "";
+				var party = pmdata.party || "";
+				
+				$('#gov-display').html("<img class='dataicon' src='assets/img/glyphicons/glyphicons_263_bank.png'>  <span class='dataval'>" + pm + "</span><br/>" +
+						"<span style='font-size:small' class='dataval'>" + party + "</span>");
+			} else {
+				$('#gov-display').html('--');	
+			}
 		} else {
-		    $('#gov-display').html('--');
+			$('#gov-display').html('--');
 		}
     },
     displayGovState: function(data){
