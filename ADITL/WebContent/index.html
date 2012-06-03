@@ -92,7 +92,7 @@
                 <option>Hobart</option>
                 <option>Melbourne</option>
                 <option>Perth</option>
-                <option>Sydney</option>
+                <option selected="true">Sydney</option>
               </select>
 	      <input class="span2" type="text" id="datepicker" value="01 May 1986"></input>
   	      <button onclick="aditl.search()" style="margin-left:0;" class="btn" type="button">GO</button>
@@ -112,7 +112,7 @@
 	    <h1><span class="location-display">Sydney</span>, <span class="date-display">1 May 1986</span></h1>
 	    <hr/>
 	    <div id="stories-display">
-	    <div class="span3 item">
+	    <!--  div class="span3 item">
 	      <img class="thumbnail" src="http://recordsearch.naa.gov.au/NAAMedia/ShowImage.asp?B=11873726&T=P&S=1">
 	      <div class="caption">Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</div>
 	    </div>
@@ -134,7 +134,7 @@
 
 	    <div class="span3 item">
 	      <img class="thumbnail" src="http://recordsearch.naa.gov.au/NAAMedia/ShowImage.asp?B=53255&T=P&S=1">
-	    </div>
+	    </div-->
 	</div>
 	</div><!-- span9 -->
 	<div class="sidebar span2">
@@ -162,7 +162,7 @@
 	      <div id="gov-display"></div>
 	    </div>
           <div class="row">
-	      <h6>Price Index <!--br/><span class="location-display"></span> <span class="date-display"></span--></h6>
+	      <h6>Price of a Loaf of bread<!--br/><span class="location-display"></span> <span class="date-display"></span--></h6>
 	      <div id="price-display"></div>
 	    </div>
 	  </div>
@@ -187,18 +187,16 @@
     <script src="assets/js/jquery.masonry.min.js"></script>
     <script src="assets/js/jquery-ui-1.8.20.custom.min.js"></script>
     <script src="assets/js/jquery.dateFormat-1.0.js"></script>
-    <script type="text/javascript">
-      var $container = $('#images');
-      $container.imagesLoaded( function(){
-        $container.masonry({
-         itemSelector : '.item'
-        });
-      });
-      $(function() {
-         $( "#datepicker" ).datepicker({ dateFormat: "dd MM yy" });
-      });
-    </script>
     <script src="assets/js/date-format.js"></script>
     <script src="assets/js/aditl.js" type="text/javascript"></script>
+    <script type="text/javascript">
+      
+      $(function() {
+         $( "#datepicker" ).datepicker({ dateFormat: "dd MM yy" });
+         aditl.search();
+      });
+      
+    </script>
+    
   </body>
 </html>

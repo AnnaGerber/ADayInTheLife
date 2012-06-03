@@ -49,6 +49,13 @@ var aditl = {
 				aditl.displayEvents(d);
 			}
 		});
+		$.ajax({
+			url: "Photosearch?date=" + formattedDate + "&keyword=" + location,
+			complete: function(d){
+				//console.log("Got stories",d);
+				aditl.displayStories(d.responseText);
+			}
+		});
 		
 		// ABS price index
 		$.ajax({
@@ -108,26 +115,45 @@ var aditl = {
 		$('.date-display').html($.format.date(date, 'dd MMMM yyyy') || "");
 		$('.year-display').html(date.getFullYear());
 		
+		// clear the slow loading results
+		$('#events-display').html(' ');
+		$('#stories-display').html(' ');
     },
-    displayPhotos: function(data){
-	/*if (data) {
-		data.each(function(d){
-	
-	  var photourl = d.large_image_url;
-	  var caption = d.title;
-	  var link = d.stories_url;
-	  $('#stories-display')
-	   .html(
-		 '<div class="span3 item"><img class="thumbnail" src="' + 
-		 photourl +
-		 '"><div class="caption"><a href="' +
-		 link +
-		 '">' +
-		 caption
-		 + '</a></div></div>'
-	   );
-       });
-	 }*/
+    displayStories: function(data){
+    	//console.log("display stories",data);
+    	try {
+			if (data){
+				var result = "Foo";
+				var stories = eval(data);
+				//console.log("data was ",data, "stories are",stories);
+				$(stories).each(function(i,d){
+					  var photourl = d.large_image_url;
+					  var caption = d.title;
+					  var link = d.stories_url;
+					  result +=
+						 '<div class="span3 item"><img class="thumbnail" src="' + 
+						 photourl +
+						 '"><div class="caption"><a href="' +
+						 link +
+						 '">' +
+						 caption
+						 + '</a></div></div>';
+						   
+				});
+				$('#stories-display').html(result);
+				var $container = $('#stories-display');
+			    $container.imagesLoaded( function(){
+			        $container.masonry({
+			         itemSelector : '.item'
+			        });
+			        
+			      });
+			} else {
+				$('#stories-display').html('No data');
+			}
+    	} catch (ex){
+    		$('#stories-display').html('There was a problem loading images: ' + ex.message);
+    	}
     },
     displayPopulationFemale: function(data){
 		if (data){
@@ -168,13 +194,41 @@ var aditl = {
 	
     },
     displayEvents: function(data){
-    	
-	if (data){
-		var eventsresult = eval(data);
-		//eventsresult.results.
-	} else {
-	    $('#events-display').html('--');
-	}
+    	try {
+			if (data){
+				var result = "";
+				var events = eval(data);
+				if (events.results && events.results.bindings) {
+					var done = {};
+					$(events.results.bindings).each(function(i,val){
+						var link = "";
+						var name = "";
+						var eventlabel = " was born";
+						if (val.page){
+							link = val.page.value;
+						}
+						if (val.name){
+							name = val.name.value;
+						}
+						if (val.placelabel){
+							eventlabel += " in " + val.placelabel.value;
+						}
+						//console.log("got bindings",val);
+						if (!done[name]){
+							result += "<p>" + (link? "<a href='" + link + "'>" + name + "</a>" : name) + eventlabel + "</p>";
+						}
+						done[name] = true;
+					});
+					$('#events-display').html(result);
+				} else {
+					$('#events-display').html('--');
+				}
+			} else {
+				$('#events-display').html('--');
+			}
+    	} catch (ex){
+    		$('#events-display').html('--');
+    	}
     },
     displayGovFederal: function(data){
 		if (data){
@@ -191,8 +245,9 @@ var aditl = {
     displayPrice: function(data){
 		if (data){
 			// FIXME : multiple value to get price of loaf of bread
-			
-			$('#price-display').html('<img class="dataicon" src="assets/img/glyphicons/glyphicons_227_usd.png"> <div class="dataval">' + data + '</div>');
+			var f = parseFloat(data) * 2.5;
+			f = f.toFixed(2);
+			$('#price-display').html('<img class="dataicon" src="assets/img/glyphicons/glyphicons_227_usd.png"> <div class="dataval">' + f + '</div>');
 		} else {
 		    $('#price-display').html('--');
 		}
