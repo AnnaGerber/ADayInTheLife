@@ -129,6 +129,37 @@ public class MongoDBAPI
     return getValue(doc, state, gender);
   }
   
+  public String getPhotoList(String date, String keyword)
+  {
+    DBCollection coll = _db.getCollection(COLLECTION_PHOTOSEARCH);
+    
+    BasicDBObject query = new BasicDBObject();
+    
+    if (date != null && !date.equals("")) {
+      query.put("startDate", "" + getYear(date));
+    }
+    
+    if (keyword != null && !keyword.equals("")) {
+      query.put("title", java.util.regex.Pattern.compile("(?i)" + keyword));
+    }
+    
+    DBCursor cur = coll.find(query);
+
+    DBObject doc = null;
+    if (cur.hasNext()) {
+      doc = cur.next();
+    }
+    
+    StringBuffer sb = new StringBuffer();
+    sb.append("{");
+    while (cur.hasNext()) {
+      sb.append("photo: " + cur.next().toString());
+    }
+    sb.append("}");
+    
+    return sb.toString();
+  }
+  
   private String getValue(DBObject doc, String path)
   {
     if (doc == null) {
