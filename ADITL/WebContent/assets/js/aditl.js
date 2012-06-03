@@ -218,7 +218,7 @@ var aditl = {
     displayRainfall: function(data){
     	var rainfall = parseInt(data);
     	var icon = "<img class='dataicon' src='assets/img/iconic-black/sun_fill_24x24.png'>";
-    	if (rainfall >= 10){
+    	if (rainfall >= 1){
     		icon = "<img class='dataicon' src='assets/img/iconic-black/rain_24x21.png'>";
     	}
 		if (data){
