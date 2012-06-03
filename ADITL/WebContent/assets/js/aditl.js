@@ -240,7 +240,7 @@ var aditl = {
 			if (data){
 				var result = "";
 				var events = eval(data);
-				if (events.results && events.results.bindings) {
+				if (events.results && events.results.bindings && events.results.bindings.length > 0) {
 					var done = {};
 					$(events.results.bindings).each(function(i,val){
 						var link = "";
@@ -262,7 +262,7 @@ var aditl = {
 					});
 					$('#events-display').html(result);
 				} else {
-					$('#events-display').html('--');
+					$('#events-display').html('<span style="font-size:smaller">(no events found)</span>');
 				}
 			} else {
 				$('#events-display').html('--');
