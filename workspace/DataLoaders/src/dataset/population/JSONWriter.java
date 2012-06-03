@@ -156,7 +156,7 @@ class PopulationYear
     StringBuffer sb = new StringBuffer();
     
     sb.append("{");
-    sb.append("year: " + _year);
+    sb.append("year: \"" + _year + "\"");
     
     for (StateType st : _stateTypeList.values()) {
       sb.append(", " + st);

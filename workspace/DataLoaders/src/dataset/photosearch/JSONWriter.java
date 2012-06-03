@@ -10,7 +10,7 @@ import java.io.InputStreamReader;
 
 public class JSONWriter
 {  
-  private static final String INPUT_FILE  = "/Users/michael/govhack/workspace/DataLoaders/src/dataset/photosearch/PhotoMetaDataClean.csv";
+  private static final String INPUT_FILE  = "/Users/michael/govhack/ADayInTheLife/workspace/DataLoaders/src/dataset/photosearch/PhotoMetaDataClean.csv";
   private static final String OUTPUT_FILE = "/Users/michael/govhack/dataset/insert_photometadata.js";
   
   public static final String COLLECTION_NAME = "photosearch";
@@ -39,16 +39,16 @@ public class JSONWriter
       String currentLine;
       int i = 0;
       while ((currentLine = br.readLine()) != null) {
-        if (i >= 26190 && i <= 40000) { //debug
+        //if (i >= 26190 && i <= 40000) { //debug
           new Photo(currentLine, bw);
-        }
+       // }
         i++;
       }
       
       try { 
-        bw.write("db." + COLLECTION_NAME + ".ensureIndex({\"start-date\": 1});\n\n");
-        bw.write("db." + COLLECTION_NAME + ".ensureIndex({\"archives-location\": 1});\n\n");
-        bw.write("db." + COLLECTION_NAME + ".ensureIndex({\"start-date\": 1, \"archives-location\": 2});\n\n");
+        bw.write("\n\ndb." + COLLECTION_NAME + ".ensureIndex({startDate: 1});\n");
+        bw.write("db." + COLLECTION_NAME + ".ensureIndex({title: 1});\n");
+        bw.write("db." + COLLECTION_NAME + ".ensureIndex({startDate: 1, title: 1});\n");
       } catch (Exception e) {
         System.err.println("Error: " + e.getMessage());
       }
