@@ -55,7 +55,7 @@ var aditl = {
 			url: "Photosearch?date=" + formattedDate + "&keyword=" + location,
 			complete: function(d){
 				//console.log("Got stories",d);
-				aditl.displayStories(d.responseText);
+				aditl.displayStories(d.responseText, formattedDate);
 			}
 		});
 		
@@ -98,6 +98,14 @@ var aditl = {
 				aditl.displayTemperatureMax(d);
 			}
 		});
+		// BOM rainfall
+		$.ajax({
+			url: "Rainfall?date=" + formattedDate + "&state=" + state,
+			success: function(d){
+				aditl.displayRainfall(d);
+			}
+		});
+		
 		$.ajax({
 			url: "PrimeMinister?date=" + formattedDate,
 			success: function(d){
@@ -126,7 +134,7 @@ var aditl = {
 		$('#stories-display').html('<img src="assets/img/ajax-loader.gif">');
     },
     
-    displayStories: function(data){
+    displayStories: function(data, formattedDate){
     	try {
 			if (data){
 				var result = "";
@@ -135,6 +143,17 @@ var aditl = {
 				// randomly 
 				function randomOrder(){
 					return (Math.round(Math.random())-0.5);
+				}
+				if (stories.length <= 1 && formattedDate) {
+					// load more general search
+					$.ajax({
+						url: "Photosearch?date=" + formattedDate,
+						complete: function(d){
+							//console.log("Got stories",d);
+							aditl.displayStories(d.responseText);
+						}
+					});
+					return;
 				}
 				stories.sort(randomOrder);
 				$(stories).each(function(i,d){
@@ -170,14 +189,14 @@ var aditl = {
     },
     displayPopulationFemale: function(data){
 		if (data){
-			$('#population-display-f').html('<img class="dataicon" src="assets/img/glyphicons/glyphicons_035_woman.png"> <div class="dataval">' + aditl.formatNumber(data) + '</div>');
+			$('#population-display-f').html('<img class="dataicon" src="assets/img/glyphicons/glyphicons_035_woman.png"> &nbsp; <div class="dataval">' + aditl.formatNumber(data) + '</div>');
 		} else {
 		    $('#population-display-f').html('--');
 		}
     },
     displayPopulationMale: function(data){
 		if (data){
-			$('#population-display-m').html('<img class="dataicon" src="assets/img/glyphicons/glyphicons_034_old_man.png"> <div class="dataval">' + aditl.formatNumber(data) + '</div>');
+			$('#population-display-m').html('<img class="dataicon" src="assets/img/glyphicons/glyphicons_034_old_man.png"> &nbsp; <div class="dataval">' + aditl.formatNumber(data) + '</div>');
 		} else {
 		    $('#population-display-m').html('--');
 		}
@@ -194,6 +213,18 @@ var aditl = {
 			$('#weather-display-max').html('<div class="dataval"> &ndash; ' + data + ' &#176;C</div>');
 		} else {
 		    $('#weather-display-max').html('--');
+		}
+    },
+    displayRainfall: function(data){
+    	var rainfall = parseInt(data);
+    	var icon = "<img class='dataicon' src='assets/img/iconic-black/sun_fill_24x24.png'>";
+    	if (rainfall >= 10){
+    		icon = "<img class='dataicon' src='assets/img/iconic-black/rain_24x21.png'>";
+    	}
+		if (data){
+			$('#weather-display-rain').html(icon + '<div class="dataval">&nbsp;' + data + ' mm</div>');
+		} else {
+		    $('#weather-display-rain').html('--');
 		}
     },
     displayMusicCharts: function(data){
