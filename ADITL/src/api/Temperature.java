@@ -49,9 +49,9 @@ public class Temperature extends HttpServlet
     
     String temperature = "";
     if (minormax.equalsIgnoreCase("min")) {
-      mongo.getMinTemperature(date, state);
+      temperature = mongo.getMinTemperature(date, state);
     } else if (minormax.equalsIgnoreCase("max")) {
-      mongo.getMaxTemperature(date, state);
+      temperature = mongo.getMaxTemperature(date, state);
     }
     
     out.print(temperature);
