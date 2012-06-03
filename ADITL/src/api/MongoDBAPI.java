@@ -38,14 +38,17 @@ public class MongoDBAPI
   private static final String COLLECTION_TEMPERATURE = "temperature";
   private static final String COLLECTION_CPI = "cpi";
   private static final String COLLECTION_PHOTOSEARCH = "photosearch";
+  private static final String COLLECTION_GOVERNMENT = "government";
   
   public static void main(String[] args) {
     MongoDBAPI m = new MongoDBAPI("test");
     
-    System.out.println(m.getCPI("1987-12-02", "AUS"));
-    System.out.println(m.getMinTemperature("1987-12-02", "NSW"));
-    System.out.println(m.getMaxTemperature("1987-12-02", "NSW"));
-    System.out.println(m.getPopulation("1987-12-02", "AUS", "male"));
+    //System.out.println(m.getCPI("1987-12-02", "AUS"));
+    //System.out.println(m.getMinTemperature("1987-12-02", "NSW"));
+    //System.out.println(m.getMaxTemperature("1987-12-02", "NSW"));
+    //System.out.println(m.getPopulation("1987-12-02", "AUS", "male"));
+    
+    System.out.println(m.getPrimeMinister("1987-12-02"));
   }
   
   public MongoDBAPI(String dbName)
@@ -150,14 +153,38 @@ public class MongoDBAPI
       doc = cur.next();
     }
     
+    boolean isFirst = true;
     StringBuffer sb = new StringBuffer();
-    sb.append("{");
+    sb.append("[");
     while (cur.hasNext()) {
-      sb.append("photo: " + cur.next().toString());
+      if (!isFirst) sb.append(", ");
+      sb.append(cur.next().toString());
+      isFirst = false;
     }
-    sb.append("}");
+    sb.append("]");
     
     return sb.toString();
+  }
+  
+  public String getPrimeMinister(String date)
+  {
+    date = date.replaceAll("-", "");
+    System.out.println(date);
+    
+    DBCollection coll = _db.getCollection(COLLECTION_GOVERNMENT);
+    
+    BasicDBObject query = new BasicDBObject();
+    query.put("start.date", new BasicDBObject("$lte", date));
+    
+    DBCursor cur = coll.find(query);
+    cur.sort(new BasicDBObject("start.date", -1)); //.limit(1);
+    
+    DBObject doc = null;
+    if (cur.hasNext()) {
+      doc = cur.next();
+    }
+    
+    return doc.toString();
   }
   
   private String getValue(DBObject doc, String path)
