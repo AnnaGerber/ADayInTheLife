@@ -257,7 +257,7 @@ var aditl = {
 							eventlabel += " in " + val.placelabel.value;
 						}
 						if (!done[name]){
-							result += "<div>" + (link? "<a href='" + link + "'>" + name + "</a>" : name) + eventlabel + "</div>";
+							result += "<div style='margin-top:4px'><img class='dataicon' src='assets/img/glyphicons/glyphicons_045_calendar.png'> &nbsp;" + (link? "<a href='" + link + "'>" + name + "</a>" : name) + eventlabel + "</div>";
 						}
 						done[name] = true;
 					});
