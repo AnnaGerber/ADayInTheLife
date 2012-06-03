@@ -13,7 +13,7 @@ import java.util.HashMap;
 
 public class JSONWriter
 {
-  public static final String INPUT_DIRECTORY = "/Users/michael/govhack/workspace/DataLoaders/src/dataset/acornsat";
+  public static final String INPUT_DIRECTORY = "/Users/michael/govhack/ADayInTheLife/workspace/DataLoaders/src/dataset/acornsat";
   public static final String OUTPUT_FILE = "/Users/michael/govhack/dataset/insert_acornsat.js";
   public static final String COLLECTION_NAME = "temperature";
   
@@ -156,21 +156,20 @@ class TemperatureSet
   {
     for (String s : _dateList.keySet()) {
       TemperatureDate td = _dateList.get(s);
-      //System.out.println(s + ": " + td._min + ", " + td._max);
      
       StringBuffer sb = new StringBuffer();
       sb.append("db." + JSONWriter.COLLECTION_NAME + ".insert({");
       sb.append("stationId: \"" + _stationId + "\"");
       sb.append(", stationName: \"" + Stations.getName(_stationId) + "\"");
-      sb.append(", latitude: \"" + Stations.getLat(_stationId) + "\"");
-      sb.append(", longitude: \"" + Stations.getLon(_stationId) + "\"");
+      sb.append(", latitude: " + Stations.getLat(_stationId));
+      sb.append(", longitude: " + Stations.getLon(_stationId));
       sb.append(", elevation: " + Stations.getElevation(_stationId));
       sb.append(", state: \"" + Stations.getState(_stationId) + "\"");
-      sb.append(", year: " + Integer.parseInt(s.substring(0,4)));
-      sb.append(", month: " + Integer.parseInt(s.substring(4,6)));
-      sb.append(", day: " + Integer.parseInt(s.substring(6,8)));
-      sb.append(", min: \"" + td._min + "\"");
-      sb.append(", max: \"" + td._max + "\"");
+      sb.append(", year: \"" + Integer.parseInt(s.substring(0,4)) + "\"");
+      sb.append(", month: \"" + Integer.parseInt(s.substring(4,6)) + "\"");
+      sb.append(", day: \"" + Integer.parseInt(s.substring(6,8)) + "\"");
+      sb.append(", min: " + td._min);
+      sb.append(", max: " + td._max);
       sb.append("});\n");
       
       try {
