@@ -43,9 +43,9 @@ public class Events extends HttpServlet {
 		String city = request.getParameter("city");
 		// use dbpedia query to get events
 		
-		String personBornQuery = "PREFIX ont: <http://dbpedia.org/ontology/> PREFIX foaf: <http://xmlns.com/foaf/0.1/> PREFIX xsd:    <http://www.w3.org/2001/XMLSchema#> SELECT ?page ?place ?name ?date WHERE {" + 
-				"?person ont:birthDate ?date; foaf:page ?page; ont:birthPlace ?place; foaf:name ?name ." + 
-				"FILTER( ( ( datatype(?date) = xsd:date ) || ( datatype(?date) = xsd:dateTime ) )  && ( regex(str(?date), \"" + date + "\") )&& (regex(str(?place),\"Australia\") || regex(str(?place),\"" + city + "\")) ) }";
+		String personBornQuery = "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> PREFIX ont: <http://dbpedia.org/ontology/> PREFIX foaf: <http://xmlns.com/foaf/0.1/> PREFIX xsd:    <http://www.w3.org/2001/XMLSchema#> SELECT ?page ?place ?name ?date ?placelabel WHERE {" + 
+				"?person ont:birthDate ?date; foaf:page ?page; ont:birthPlace ?place; foaf:name ?name . ?place rdfs:label ?placelabel ." + 
+				"FILTER (lang(?placelabel) = \"en\") . FILTER( ( ( datatype(?date) = xsd:date ) || ( datatype(?date) = xsd:dateTime ) )  && ( regex(str(?date), \"" + date + "\") )&& (regex(str(?place),\"Australia\") || regex(str(?place),\"" + city + "\")) ) }";
 		URL url = new URL("http://dbpedia.org/sparql?default-graph-uri=http%3A%2F%2Fdbpedia.org&output=json&query=" + URLEncoder.encode(personBornQuery, "UTF-8")); 
 		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 		conn.setRequestMethod("GET");
