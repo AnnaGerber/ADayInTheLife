@@ -39,6 +39,7 @@ public class MongoDBAPI
   private static final String COLLECTION_CPI = "cpi";
   private static final String COLLECTION_PHOTOSEARCH = "photosearch";
   private static final String COLLECTION_GOVERNMENT = "government";
+  private static final String COLLECTION_RAINFALL = "rainfall";
   
   public static void main(String[] args) {
     MongoDBAPI m = new MongoDBAPI("test");
@@ -48,7 +49,9 @@ public class MongoDBAPI
     //System.out.println(m.getMaxTemperature("1987-12-02", "NSW"));
     //System.out.println(m.getPopulation("1987-12-02", "AUS", "male"));
     
-    System.out.println(m.getPrimeMinister("1987-12-02"));
+    //System.out.println(m.getPrimeMinister("1987-12-02"));
+    
+    //System.out.println(m.getRainfall("1987-12-02", "NSW"));
   }
   
   public MongoDBAPI(String dbName)
@@ -185,6 +188,29 @@ public class MongoDBAPI
     }
     
     return doc.toString();
+  }
+  
+  public String getRainfall(String date, String state)
+  {
+    DBCollection coll = _db.getCollection(COLLECTION_RAINFALL);
+    
+    BasicDBObject query = new BasicDBObject();
+    query.put("year", "" + getYear(date));
+    int y = getYear(date);
+    query.put("month", "" + getMonth(date));
+    int m = getMonth(date);
+    query.put("day", "" + getDay(date));
+    int d = getDay(date);
+    query.put("state", "" + state);
+    
+    DBCursor cur = coll.find(query);
+
+    DBObject doc = null;
+    if (cur.hasNext()) {
+      doc = cur.next();
+    }
+    
+    return getValue(doc, "rainfall");
   }
   
   private String getValue(DBObject doc, String path)
