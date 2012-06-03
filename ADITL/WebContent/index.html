@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Bootstrap, from Twitter</title>
+    <title>A Day in the Life</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -29,9 +29,27 @@
       }
       .sidebar {
         padding-left:1em;
+        
+      }
+      .dataicon {
+        margin-top:-10px;
+      }
+      .dataval {
+        display: inline-block;
+        font-size: 24px;
+        line-height: 35px;
+        font-weight:bold;   
+        rendering: optimizelegibility;
+      }
+      #weather-display-max , #weather-display-min{
+        display: inline-block;
+      }
+      .prevnextnav {
+      	border-right: 1px solid #eee;
       }
       .footer {
         font-size:smaller;
+        
       }
     </style>
     <link href="http://fonts.googleapis.com/css?family=Gudea" rel="stylesheet" type="text/css">
@@ -70,8 +88,8 @@
                 <option>Adelaide</option>
                 <option>Brisbane</option>
                 <option>Canberra</option>
-		<option>Darwin</option>
-		<option>Hobart</option>
+                <option>Darwin</option>
+                <option>Hobart</option>
                 <option>Melbourne</option>
                 <option>Perth</option>
                 <option>Sydney</option>
@@ -91,7 +109,7 @@
     <div class="container-fluid">
 	<div class="row-fluid">
 	  <div class="feature span9">
-	    <h1><span id="location-display">Sydney</span>, <span id="date-display">1 May 1986</span></h1>
+	    <h1><span class="location-display">Sydney</span>, <span class="date-display">1 May 1986</span></h1>
 	    <hr/>
 	    <div id="stories-display">
 	    <div class="span3 item">
@@ -122,35 +140,37 @@
 	<div class="sidebar span2">
 	  <div class="container">
 	    <div class="row">
-	      <h6>Population</h6>
-	      <div id="population-display"></div>
+	      <h6>Population <span class="state-display"></span> <span class="year-display"></span></h6>
+	      <div id="population-display-f"></div>
+	      <div id="population-display-m"></div>
 	    </div>
 	    <div class="row">
-	      <h6>Weather</h6>
-	      <div id="weather-display"></div>
+	      <h6>Weather <!--  br/><span class="location-display"></span> <span class="date-display"></span--></h6>
+	      <div id="weather-display-min"></div>
+	      <div id="weather-display-max"></div>
 	    </div>
-            <div class="row">
+        <!--  div class="row">
 	      <h6>In the charts</h6>
 	      <div id="music-display"></div>
-	    </div>
-            <div class="row">
-	      <h6>Events</h6>
+	    </div-->
+        <div class="row">
+	      <h6>Events <!--br/><span class="location-display"></span> <span class="date-display"></span--></h6>
 	      <div id="events-display"></div>
 	    </div>
             <div class="row">
 	      <h6>Government</h6>
 	      <div id="gov-display"></div>
 	    </div>
-            <div class="row">
-	      <h6>Price Index</h6>
+          <div class="row">
+	      <h6>Price Index <!--br/><span class="location-display"></span> <span class="date-display"></span--></h6>
 	      <div id="price-display"></div>
 	    </div>
 	  </div>
 	</div>
 	</div><!-- row-fluid-->
 	<div class="row-fluid">
-	<div class="span9">
-	    <div class="pull-left"><a href="#" onclick="aditl.previous()"><i class="icon-chevron-left"></i> prev</div></div>
+	<div class="span9 prevnextnav">
+	    <div class="pull-left"><a href="#" onclick="aditl.previous()"><i class="icon-chevron-left"></i> prev</a></div>
 	    <div class="pull-right"><a href="#" onclick="aditl.next()">next <i class="icon-chevron-right"></i></a></div>
 	</div>
 	</div>
@@ -178,6 +198,7 @@
          $( "#datepicker" ).datepicker({ dateFormat: "dd MM yy" });
       });
     </script>
+    <script src="assets/js/date-format.js"></script>
     <script src="assets/js/aditl.js" type="text/javascript"></script>
   </body>
 </html>
