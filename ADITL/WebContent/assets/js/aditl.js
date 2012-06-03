@@ -138,6 +138,7 @@ var aditl = {
 				}
 				stories.sort(randomOrder);
 				$(stories).each(function(i,d){
+					if (i < 18) {
 					  var photourl = d.largeImageUrl;
 					  if (!photourl) photourl = d.smallImageUrl;
 					  var caption = d.title;
@@ -150,7 +151,7 @@ var aditl = {
 						 '">' +
 						 caption
 						 + '</a></div></div>';
-						   
+					}
 				});
 				$('#stories-display').html(result);
 				/*var $container = $('#stories-display');
@@ -246,7 +247,8 @@ var aditl = {
 			var pm = pmdata.ministry || "";
 			var party = pmdata.party || "";
 			
-			$('#gov-display').html("Federal: " + pm + ", " + party);
+			$('#gov-display').html("<img class='dataicon' src='assets/img/glyphicons/glyphicons_263_bank.png'>  <span class='dataval'>" + pm + "</span><br/>" +
+					"<span style='font-size:small' class='dataval'>" + party + "</span>");
 		} else {
 		    $('#gov-display').html('--');
 		}
