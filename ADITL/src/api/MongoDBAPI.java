@@ -41,6 +41,8 @@ public class MongoDBAPI
   private static final String COLLECTION_GOVERNMENT = "government";
   private static final String COLLECTION_RAINFALL = "rainfall";
   
+  private static Mongo _mongo;
+  
   public static void main(String[] args) {
     MongoDBAPI m = new MongoDBAPI("test");
     
@@ -56,15 +58,17 @@ public class MongoDBAPI
   
   public MongoDBAPI(String dbName)
   {
-    Mongo m;
-    try {
-      m = new Mongo();
-      _db = m.getDB(dbName);
-    } catch (UnknownHostException e) {
-      e.printStackTrace();
-    } catch (MongoException e) {
-      e.printStackTrace();
+    if (_mongo == null) {
+      try {
+        _mongo = new Mongo();
+      } catch (UnknownHostException e) {
+        e.printStackTrace();
+      } catch (MongoException e) {
+        e.printStackTrace();
+      }
     }
+    
+    _db = _mongo.getDB(dbName);
   }
   
   public String getCPI(String date, String state) {
