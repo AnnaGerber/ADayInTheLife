@@ -67,9 +67,11 @@ public class MongoDBAPI
         e.printStackTrace();
       }
     }
-	  
+<<<<<<< .mine	  
     _db = _mongo.getDB(dbName);
-  }
+=======    
+    _db = _mongo.getDB(dbName);
+>>>>>>> .theirs  }
   
   public String getCPI(String date, String state) {
     DBCollection coll = _db.getCollection(COLLECTION_CPI);
