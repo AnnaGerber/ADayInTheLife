@@ -55,6 +55,9 @@
       h6 {
         margin-top:2em;
       }
+      h1 {
+        margin-top:10px;
+      }
     </style>
     <link href="http://fonts.googleapis.com/css?family=Gudea" rel="stylesheet" type="text/css">
     <link href="assets/css/bootstrap-responsive.css" rel="stylesheet">
@@ -70,6 +73,18 @@
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/ico/apple-touch-icon-114-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="assets/ico/apple-touch-icon-72-precomposed.png">
     <link rel="apple-touch-icon-precomposed" href="assets/ico/apple-touch-icon-57-precomposed.png">
+    <script type="text/javascript">
+	  var _gaq = _gaq || [];
+	  _gaq.push(['_setAccount', 'UA-32447203-1']);
+	  _gaq.push(['_trackPageview']);
+	
+	  (function() {
+	    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+	    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+	    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	
+	</script>
   </head>
 
   <body>
@@ -199,8 +214,15 @@
     <script type="text/javascript">
       
       $(function() {
-         $( "#datepicker" ).datepicker({ dateFormat: "dd MM yy" });
-         aditl.search();
+         $( "#datepicker" ).datepicker({ dateFormat: "dd MM yy", changeYear: true, yearRange: "1860:2012" });
+         if (document.location.href.match("#")){
+        	    var params = document.location.href.split("#")[1].split("+");
+        	    if (params.length==2){
+        	    	aditl.getData(params[0], new Date(Date.parse(params[1])));
+        	    }
+         } else {
+        	   aditl.search();
+         }
       });
       
     </script>

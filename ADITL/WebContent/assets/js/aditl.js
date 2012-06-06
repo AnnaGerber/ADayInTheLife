@@ -40,6 +40,7 @@ var aditl = {
     getData: function(location, date){
     	var formattedDate = date.format("yyyy-mm-dd");
 		var state = aditl.lookupState(location);
+		document.location.href="/ADITL/#" + escape(location + "+" + formattedDate);
 		aditl.displayHeaders(location,state,date);
 		
 		// dbpedia events 
@@ -257,7 +258,7 @@ var aditl = {
 							eventlabel += " in " + val.placelabel.value;
 						}
 						if (!done[name]){
-							result += "<div style='margin-top:4px'><img class='dataicon' src='assets/img/glyphicons/glyphicons_045_calendar.png'> &nbsp;" + (link? "<a href='" + link + "'>" + name + "</a>" : name) + eventlabel + "</div>";
+							result += "<div style='margin-top:8px'><img class='dataicon' src='assets/img/glyphicons/glyphicons_045_calendar.png'> &nbsp;" + (link? "<a href='" + link + "'>" + name + "</a>" : name) + eventlabel + "</div>";
 						}
 						done[name] = true;
 					});
