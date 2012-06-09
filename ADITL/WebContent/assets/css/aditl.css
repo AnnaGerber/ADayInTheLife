@@ -35,11 +35,19 @@ body {
   border-right: 1px solid #eee;
 }
 .foot {
-  font-size:smaller;    
+  font-size:smaller;
+  background-color: #EEE;
+  padding: 10px;
+  border-top: 1px solid #CCC;
+  height: 75px;
+  text-align: center;;
 }
 h6 {
   margin-top:2em;
 }
 .thumbnail {
   float:left;
+}
+.social-button-container {
+  margin-bottom: 6px;
 }

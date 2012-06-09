@@ -13,7 +13,6 @@ import com.mongodb.DBObject;
 import com.mongodb.Mongo;
 import com.mongodb.MongoException;
 
-
 public class MongoDBAPI
 {
   public static final String STATE_ACT = "ACT";
@@ -33,7 +32,7 @@ public class MongoDBAPI
   public static final String TEMPERATURE_MIN = "min";
   public static final String TEMPERATURE_MAX = "max";
   
-  private static DB _db;
+  private static Mongo _mongo;
   private static final String DATABASE_NAME = "test";
   private static final String COLLECTION_POPULATION = "population";
   private static final String COLLECTION_TEMPERATURE = "temperature";
@@ -43,19 +42,22 @@ public class MongoDBAPI
   private static final String COLLECTION_RAINFALL = "rainfall";
   
   static {
-    Mongo m;
-    try {
-      m = new Mongo();
-      _db = m.getDB(DATABASE_NAME);
-    } catch (UnknownHostException e) {
-      e.printStackTrace();
-    } catch (MongoException e) {
-      e.printStackTrace();
-    } 
+    if (_mongo == null) {
+      try {
+        _mongo = new Mongo();
+      } catch (UnknownHostException e) {
+        e.printStackTrace();
+      } catch (MongoException e) {
+        e.printStackTrace();
+      } 
+    }
+    
   }
   
-  public static String getCPI(String date, String state) {
-    DBCollection coll = _db.getCollection(COLLECTION_CPI);
+  public static String getCPI(String date, String state)
+  {
+    DB db = _mongo.getDB(DATABASE_NAME);
+    DBCollection coll = db.getCollection(COLLECTION_CPI);
     
     BasicDBObject query = new BasicDBObject();
     query.put("year", "" + getYear(date));
@@ -65,22 +67,21 @@ public class MongoDBAPI
     DBObject doc = null;
     if (cur.hasNext()) {
       doc = cur.next();
+      return getValue(doc, state);
     }
     
-    return getValue(doc, state);
+    return "";
   }
   
   private static String getTemperature(String date, String state, String bound)
   {
-    DBCollection coll = _db.getCollection(COLLECTION_TEMPERATURE);
+    DB db = _mongo.getDB(DATABASE_NAME);
+    DBCollection coll = db.getCollection(COLLECTION_TEMPERATURE);
     
     BasicDBObject query = new BasicDBObject();
     query.put("year", "" + getYear(date));
-    int y = getYear(date);
     query.put("month", "" + getMonth(date));
-    int m = getMonth(date);
     query.put("day", "" + getDay(date));
-    int d = getDay(date);
     query.put("state", "" + state);
     
     DBCursor cur = coll.find(query);
@@ -88,9 +89,10 @@ public class MongoDBAPI
     DBObject doc = null;
     if (cur.hasNext()) {
       doc = cur.next();
+      return getValue(doc, bound);
     }
     
-    return getValue(doc, bound);
+    return "";
   }
   
   public static String getMinTemperature(String date, String state)
@@ -105,7 +107,8 @@ public class MongoDBAPI
   
   public static String getPopulation(String date, String state, String gender) 
   {
-    DBCollection coll = _db.getCollection(COLLECTION_POPULATION);
+    DB db = _mongo.getDB(DATABASE_NAME);
+    DBCollection coll = db.getCollection(COLLECTION_POPULATION);
     
     BasicDBObject query = new BasicDBObject();
     query.put("year", "" + getYear(date));
@@ -115,16 +118,17 @@ public class MongoDBAPI
     DBObject doc = null;
     if (cur.hasNext()) {
       doc = cur.next();
+      if (gender == null) gender = GENDER_ALL;
+      return getValue(doc, state, gender);
     }
     
-    if (gender == null) gender = GENDER_ALL;
-    
-    return getValue(doc, state, gender);
+    return "";
   }
   
   public static String getPhotoList(String date, String keyword)
   {
-    DBCollection coll = _db.getCollection(COLLECTION_PHOTOSEARCH);
+    DB db = _mongo.getDB(DATABASE_NAME);
+    DBCollection coll = db.getCollection(COLLECTION_PHOTOSEARCH);
     
     BasicDBObject query = new BasicDBObject();
     
@@ -137,30 +141,30 @@ public class MongoDBAPI
     }
     
     DBCursor cur = coll.find(query);
-
-    DBObject doc = null;
+    
     if (cur.hasNext()) {
-      doc = cur.next();
+      boolean isFirst = true;
+      StringBuffer sb = new StringBuffer();
+      sb.append("[");
+      while (cur.hasNext()) {
+        if (!isFirst) sb.append(", ");
+        sb.append(cur.next().toString());
+        isFirst = false;
+      }
+      sb.append("]");
+      
+      return sb.toString();
     }
     
-    boolean isFirst = true;
-    StringBuffer sb = new StringBuffer();
-    sb.append("[");
-    while (cur.hasNext()) {
-      if (!isFirst) sb.append(", ");
-      sb.append(cur.next().toString());
-      isFirst = false;
-    }
-    sb.append("]");
-    
-    return sb.toString();
+    return "";
   }
   
   public static String getPrimeMinister(String date)
   {
     date = date.replaceAll("-", "");
     
-    DBCollection coll = _db.getCollection(COLLECTION_GOVERNMENT);
+    DB db = _mongo.getDB(DATABASE_NAME);
+    DBCollection coll = db.getCollection(COLLECTION_GOVERNMENT);
     
     BasicDBObject query = new BasicDBObject();
     query.put("start.date", new BasicDBObject("$lte", date));
@@ -171,22 +175,21 @@ public class MongoDBAPI
     DBObject doc = null;
     if (cur.hasNext()) {
       doc = cur.next();
+      return doc.toString();
     }
     
-    return doc.toString();
+    return "";
   }
   
   public static String getRainfall(String date, String state)
   {
-    DBCollection coll = _db.getCollection(COLLECTION_RAINFALL);
+    DB db = _mongo.getDB(DATABASE_NAME);
+    DBCollection coll = db.getCollection(COLLECTION_RAINFALL);
     
     BasicDBObject query = new BasicDBObject();
     query.put("year", "" + getYear(date));
-    int y = getYear(date);
     query.put("month", "" + getMonth(date));
-    int m = getMonth(date);
     query.put("day", "" + getDay(date));
-    int d = getDay(date);
     query.put("state", "" + state);
     
     DBCursor cur = coll.find(query);
@@ -194,9 +197,10 @@ public class MongoDBAPI
     DBObject doc = null;
     if (cur.hasNext()) {
       doc = cur.next();
+      return getValue(doc, "rainfall");
     }
     
-    return getValue(doc, "rainfall");
+    return "";
   }
   
   private static String getValue(DBObject doc, String path)

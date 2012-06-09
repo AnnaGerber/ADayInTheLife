@@ -1,23 +1,47 @@
 
 var aditl = {
-    /** action triggered by go button: search on selected date and location **/
-    search: function(){
-        aditl.getData($('#location').val(), new Date(Date.parse($('#datepicker').val())));
-    },
-    /** go to previous day **/
-    previous: function(){
-    	var prevday = new Date(Date.parse($('#datepicker').val()) - 86400000);
-    	$('#datepicker').datepicker('setDate', prevday);
-        aditl.getData($('#location').val(), prevday);
-    },
-    /** go to next day **/
-    next: function(){
-	var nextday = new Date(Date.parse($('#datepicker').val()) + 86400000);
-	$('#datepicker').datepicker('setDate', nextday);
-        aditl.getData($('#location').val(), nextday);
-    },
-    lookupState: function(location){
-    	var state = "";
+	missingDataCount: 0
+,	photosAvailable: false
+, defaultLocation: "Sydney"
+, defaultDate: new Date(Date.parse('1986-05-01'))
+	/** action triggered by go button: search on selected date and location **/
+, search: function() {
+    var date = new Date(Date.parse($('#datepicker').val()));
+    var formattedDate = date.format("yyyy-mm-dd");
+    var location = $('#location').val();
+  
+    document.location.href = document.location.pathname+ "#" + escape(location + "+" + formattedDate);
+  }
+  /** This function does all the magic, this is called everytime the hash part of the URL
+   * changes, this then pulls the appropriate parts of the URL and sets the page and AJAX 
+   * calls up.
+   */
+, searchFromURL: function() {
+    if (document.location.href.match("#")) {
+      var searchParam = document.location.href.split("#")[1].split("+");
+      $('#location').val(searchParam[0]);
+      var searchday = new Date(Date.parse(searchParam[1]));
+      $('#datepicker').datepicker('setDate', searchday);
+      aditl.getData($('#location').val(), searchday);
+    } else {
+      $('#location').val('Sydney');
+      $('#datepicker').datepicker('setDate', aditl.defaultDate);
+      aditl.getData(aditl.defaultLocation, aditl.defaultDate);
+    }
+    // Update the FB like button URL so it include the hash part of the URL.
+    $('.fb-like').prop('data-href', document.location.href);
+    
+    // Set the location for the next link.
+    var nextDate = new Date(Date.parse($('#datepicker').val()) + 86400000);
+    var nextFormattedDate = nextDate.format("yyyy-mm-dd");
+    $('#linkNext').prop('href', document.location.pathname+ "#" + escape($('#location').val() + "+" + nextFormattedDate));
+    // Set the location for the previous link.
+    var prevDate = new Date(Date.parse($('#datepicker').val()) - 86400000);
+    var prevFormattedDate = prevDate.format("yyyy-mm-dd");
+    $('#linkPrevious').prop('href', document.location.pathname+ "#" + escape($('#location').val() + "+" + prevFormattedDate));
+  }
+, lookupState: function(location) {
+    var state = "";
 		if (location == "Adelaide") {
 			state = "SA";
 		} else if (location == "Brisbane") {
@@ -36,17 +60,21 @@ var aditl = {
 			state = "NSW";
 		}
 		return state;
-    },
-    getData: function(location, date){
-    	var formattedDate = date.format("yyyy-mm-dd");
+  }
+, getData: function(location, date) {
+    // Reset the variables used for the unavailable message
+    aditl.missingDataCount = 0;
+    aditl.photosAvailable = false;
+    	
+    var formattedDate = date.format("yyyy-mm-dd");
 		var state = aditl.lookupState(location);
-		document.location.href="/ADITL/#" + escape(location + "+" + formattedDate);
+		
 		aditl.displayHeaders(location,state,date);
 		
 		// dbpedia events 
 		$.ajax({
 			url: "Events?date=" + formattedDate + "&city=" + location,
-			success: function(d){
+			success: function(d) {
 				aditl.displayEvents(d);
 			}
 		});
@@ -54,7 +82,7 @@ var aditl = {
 		// NAA photos
 		$.ajax({
 			url: "Photosearch?date=" + formattedDate + "&keyword=" + location,
-			complete: function(d){
+			complete: function(d) {
 				//console.log("Got stories",d);
 				aditl.displayStories(d.responseText, formattedDate);
 			}
@@ -63,7 +91,7 @@ var aditl = {
 		// ABS price index
 		$.ajax({
 			url: "CPI?date=" + formattedDate + "&state=" + state,
-			success: function(d){
+			success: function(d) {
 				aditl.displayPrice(d);
 			}
 		});
@@ -71,7 +99,7 @@ var aditl = {
 		// ABS population - females
 		$.ajax({
 			url: "Population?date=" + formattedDate + "&state=" + state + "&gender=female",
-			success: function(d){
+			success: function(d) {
 				aditl.displayPopulationFemale(d);
 			}
 		});
@@ -79,7 +107,7 @@ var aditl = {
 		// ABS population - males
 		$.ajax({
 			url: "Population?date=" + formattedDate + "&state=" + state + "&gender=male",
-			success: function(d){
+			success: function(d) {
 				aditl.displayPopulationMale(d);
 			}
 		});
@@ -87,7 +115,7 @@ var aditl = {
 		// BOM temperature - min
 		$.ajax({
 			url: "Temperature?date=" + formattedDate + "&state=" + state + "&minormax=min",
-			success: function(d){
+			success: function(d) {
 				aditl.displayTemperatureMin(d);
 			}
 		});
@@ -95,21 +123,22 @@ var aditl = {
 		// BOM temperature - max
 		$.ajax({
 			url: "Temperature?date=" + formattedDate + "&state=" + state + "&minormax=max",
-			success: function(d){
+			success: function(d) {
 				aditl.displayTemperatureMax(d);
 			}
 		});
+		
 		// BOM rainfall
 		$.ajax({
 			url: "Rainfall?date=" + formattedDate + "&state=" + state,
-			success: function(d){
+			success: function(d) {
 				aditl.displayRainfall(d);
 			}
 		});
 		
 		$.ajax({
 			url: "PrimeMinister?date=" + formattedDate,
-			success: function(d){
+			success: function(d) {
 				aditl.displayGovFederal(d);
 			}
 		});
@@ -120,12 +149,9 @@ var aditl = {
 		}
 	});*/
 		//aditl.displayMusicCharts();
-		
-		
-		
-    },
-    displayHeaders: function(location, state, date){
-		$('.location-display').html(location || "");
+  }
+, displayHeaders: function(location, state, date) {
+    $('.location-display').html(location +", " || "");
 		$('.state-display').html(state || "");
 		$('.date-display').html($.format.date(date, 'dd MMMM yyyy') || "");
 		$('.year-display').html(date.getFullYear());
@@ -133,12 +159,12 @@ var aditl = {
 		// display loading icons for the slow loading results
 		$('#gov-display').html('');
 		$('#events-display').html('<img src="assets/img/ajax-loader.gif">');
-		$('#stories-display').html('<img src="assets/img/ajax-loader.gif">');
-    },
-    
-    displayStories: function(data, formattedDate){
-    	try {
-			if (data){
+		//$('#stories-display').html('<img src="assets/img/ajax-loader.gif">');
+    }
+, displayStories: function(data, formattedDate) {
+    try {
+			if (data) {
+				aditl.photosAvailable = true;
 				var result = "";
 				var stories = eval(data);
 				//console.log("data was ",data, "stories are",stories);
@@ -183,62 +209,61 @@ var aditl = {
 			        
 			      });*/
 			} else {
-				$('#stories-display').html('No data');
+				aditl.addMissingData('#stories-display');
 			}
     	} catch (ex){
     		$('#stories-display').html('There was a problem loading images: ' + ex.message);
     	}
-    },
-    displayPopulationFemale: function(data){
-		if (data){
+    }
+, displayPopulationFemale: function(data) {
+		if (data) {
 			$('#population-display-f').html('<img class="dataicon" src="assets/img/glyphicons/glyphicons_035_woman.png"> &nbsp; <div class="dataval">' + aditl.formatNumber(data) + '</div>');
 		} else {
-		    $('#population-display-f').html('--');
-		}
-    },
-    displayPopulationMale: function(data){
-		if (data){
+		    aditl.addMissingData('#population-display-f');
+	  }
+  }
+, displayPopulationMale: function(data) {
+		if (data) {
 			$('#population-display-m').html('<img class="dataicon" src="assets/img/glyphicons/glyphicons_034_old_man.png"> &nbsp; <div class="dataval">' + aditl.formatNumber(data) + '</div>');
 		} else {
-		    $('#population-display-m').html('--');
+		    aditl.addMissingData('#population-display-m');
 		}
-    },
-    displayTemperatureMin: function(data){
-		if (data){
+  }
+, displayTemperatureMin: function(data) {
+		if (data) {
 			$('#weather-display-min').html('<div class="dataval">' + data + ' &#176;C</div>');
 		} else {
-		    $('#weather-display-min').html('--');
+		    aditl.addMissingData('#weather-display-min');
 		}
-    }, 
-    displayTemperatureMax: function(data){
-		if (data){
+  }
+, displayTemperatureMax: function(data) {
+		if (data) {
 			$('#weather-display-max').html('<div class="dataval"> &ndash; ' + data + ' &#176;C</div>');
 		} else {
-		    $('#weather-display-max').html('--');
+		    aditl.addMissingData('#weather-display-max');
 		}
-    },
-    displayRainfall: function(data){
+  }
+, displayRainfall: function(data) {
     	var rainfall = parseInt(data);
     	var icon = "<img class='dataicon' src='assets/img/iconic-black/sun_fill_24x24.png'>";
-    	if (rainfall >= 1){
+    	if (rainfall >= 1) {
     		icon = "<img class='dataicon' src='assets/img/iconic-black/rain_24x21.png'>";
     	}
 		if (data){
 			$('#weather-display-rain').html(icon + '<div class="dataval">&nbsp;' + data + ' mm</div>');
 		} else {
-		    $('#weather-display-rain').html('--');
+		    aditl.addMissingData('#weather-display-rain');
 		}
-    },
-    displayMusicCharts: function(data){
-		if (data){
-//		     '<img src="assets/img/glyphicons/glyphicons_017_music.png">'
+  }
+, displayMusicCharts: function(data) {
+    if (data) {
+      // '<img src="assets/img/glyphicons/glyphicons_017_music.png">'
 		} else {
-		    $('#music-display').html('--');
+		  aditl.addMissingData('#music-display');
 		}
-	
-    },
-    displayEvents: function(data){
-    	try {
+  }
+, displayEvents: function(data) {
+    try {
 			if (data){
 				var result = "";
 				var events = eval(data);
@@ -264,58 +289,77 @@ var aditl = {
 					});
 					$('#events-display').html(result);
 				} else {
-					$('#events-display').html('<span style="font-size:smaller">(no events found)</span>');
+					aditl.addMissingData('#events-display');
 				}
 			} else {
-				$('#events-display').html('--');
+				aditl.addMissingData('#events-display');
 			}
-    	} catch (ex){
-    		$('#events-display').html('--');
-    	}
-    },
-    displayGovFederal: function(data){
-		if (data){
+    } catch (ex){
+      aditl.addMissingData('#events-display');
+    }
+  }
+, displayGovFederal: function(data) {
+    if (data) {
 			var pmdata = eval(data);
-			if (pmdata && pmdata.ministry){
-				//console.log(pmdata);
+			if (pmdata && pmdata.ministry) {
 				var pm = pmdata.ministry || "";
 				var party = pmdata.party || "";
 				
 				$('#gov-display').html("<img class='dataicon' src='assets/img/glyphicons/glyphicons_263_bank.png'>  <span class='dataval'>" + pm + "</span><br/>" +
 						"<span style='font-size:small' class='dataval'>" + party + "</span>");
 			} else {
-				$('#gov-display').html('--');	
+				aditl.addMissingData('#gov-display');
 			}
 		} else {
-			$('#gov-display').html('--');
+			aditl.addMissingData('#gov-display');
 		}
-    },
-    displayGovState: function(data){
-		if (data){
+  }
+, displayGovState: function(data) {
+    if (data) {
 		} else {
-		    $('#gov-display').html('--');
-		}
-    },
-    displayPrice: function(data){
-		if (data){
+		  aditl.addMissingData('#gov-display');
+    }
+  }
+, displayPrice: function(data) {
+		if (data) {
 			//  multiply value to get price of loaf of bread - $2.50 in 2012
 			var f = parseFloat(data) * 2.5;
 			f = f.toFixed(2);
 			$('#price-display').html('<img class="dataicon" src="assets/img/glyphicons/glyphicons_227_usd.png"> <div class="dataval">' + f + '</div>');
 		} else {
-		    $('#price-display').html('--');
+		    aditl.addMissingData('#price-display');
 		}
-    },
-   formatNumber: function(num) {
-    	if (num){
-	    	var str = num.split('.');
-	    	var str1 = str[0]; // remove decimal places
-	    	// add commas
-	    	var rgx = /(\d+)(\d{3})/;
-	    	while (rgx.test(str1)) {
-	    		str1 = str1.replace(rgx, '$1' + ',' + '$2');
-	    	}
-	    	return str1;
-    	}
+  }
+, formatNumber: function(num) {
+   if (num) {
+	  	var str = num.split('.');
+	  	var str1 = str[0]; // remove decimal places
+	  	// add commas
+	  	var rgx = /(\d+)(\d{3})/;
+	  	while (rgx.test(str1)) {
+	  		str1 = str1.replace(rgx, '$1' + ',' + '$2');
+	  	}
+	  	return str1;
     }
-}
+  }
+, addMissingData: function(selector) {
+  	$(selector).html('--');
+  	aditl.missingDataCount++;
+   	if (aditl.missingDataCount > 4 && !aditl.photosAvailable) {
+   		var unavailableMessage = 
+   			"<blockquote><h2>Sorry, we don't know enough about life on this date.</h2>" +
+              "<small>A day in the life tries to reconnect you with your past. Try putting in your birthday, friends and families birthdays or a significant event in your life such as the day you got married.</small></blockquote>";
+    	$('#stories-display').html(unavailableMessage);
+    }
+  } 
+};
+
+$(window).load(function() {
+  // Using the jQuery hashchange plugin, watch for changes to the hash part of the URL
+  // and re-query the data.
+  $(window).hashchange(function() {
+    aditl.searchFromURL();
+  });
+  // On initial load trigger the hashchange in case parameters have been passed in.
+  $(window).hashchange();
+});

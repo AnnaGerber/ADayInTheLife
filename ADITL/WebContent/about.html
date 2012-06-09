@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>A Day in the Life</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A Day in the Life provides a personal connection with Australias past.">
+    <meta name="author" content="Mike Leonard and Anna Gerber">
+  
+    <!-- Le styles -->
+    <link href="assets/css/bootstrap.css" rel="stylesheet">
+    <link href="http://fonts.googleapis.com/css?family=Gudea" rel="stylesheet" type="text/css">
+    <link href="assets/css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="assets/css/aditl.css" rel="stylesheet">
+    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  
+    <!-- Le fav and touch icons -->
+    <link rel="shortcut icon" href="assets/ico/favicon.ico">
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="assets/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="assets/ico/apple-touch-icon-57-precomposed.png">
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-32447203-1']);
+      _gaq.push(['_trackPageview']);
+    
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+  </head>
+
+  <body>
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container-fluid">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <div style="position:relative;top:8px"><a class="brand" href="index.html">A Day in the Life</a></div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="container-fluid">
+      <div class="row-fluid">
+        <h1>About A Day in the Life</h1>
+        <hr/>
+        <div>
+          <h2>Summary</h2>        
+          <p>
+            Over 100 years of data, information and imagery has been captured in the many datasets available for GovHack, but how does the average person connect with this? Do they care what the rainfall was on the 1st March 1965? Do you want to browse photos from 60 years ago? Maybe, maybe not. However, every person has a nostalgic interest in the events around the time of their birth, their families births, their friends births – how has the world changed? Was I born on a rainy day? How much did bread cost back then? Why did people wear such ‘funny’ clothes?
+            A Day in the Life aims to take as many datasets as possible that invoke nostalgia and interest. Simply enter a date and a location and you will see a point in time snapshot of what the world looked like then. Photos from the period are selected from the National Archives, population and currency information is provided by the Australian Bureau of Statistics specific to the location selected and rainfall and temperature is displayed from the Bureau of Meteorology.
+            To provide that extra connection to the past datasources from dbpedia have been consumed to provide information on historic events.
+          </p>
+          <h2>How did A Day in the Life start?</h2>
+          <p>
+            A Day in the Life was originally developed for GovHack 2012.
+          </p>
+          <h2>Approach</h2>
+          <p>
+            The National Archives image metadata as well as historical datasets for temperature and rainfall from BOM and population and price index from ABS were processed and loaded into MongoDB.       
+            SPARQL queries were developed to extract additional relevant linked data information from dbpedia to supplement the existing datasets.
+            A web application providing REST-based APIs was developed to support querying and retrieving data from the datasets.
+            A tablet-friendly Web UI was developed on top of the REST API to present the information.
+          </p>
+        </div>
+      </div>
+    </div> <!-- /container -->
+    <div class="foot">This project was developed by Mike Leonard and Anna Gerber as part of <a href="http://www.govhack.org/">govhack 2012 in Canberra</a> you can read more about the project <a href="about.html">here</a>. Code released on <a href="https://github.com/AnnaGerber/ADayInTheLife/">GitHub</a> under an MIT open source license. Please check with the respective owners for licensing and copyright terms for content loaded from mashed up data sources. All other materials are released under a Creative Commons BY license, icons sourced from <a href="http://glyphicons.com/">Glyphicons</a> and <a href="http://somerandomdude.com/work/iconic/">iconic</a>.</div>  
+        
+  </body>
+</html>
