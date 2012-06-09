@@ -142,6 +142,13 @@ var aditl = {
 				aditl.displayGovFederal(d);
 			}
 		});
+		
+		$.ajax({
+      url: "Premier?date=" + formattedDate + "&state=" + state,
+      success: function(d) {
+        aditl.displayPremier(d);
+      }
+    });
 		/*$.ajax({
 		url: "?date=" + formattedDate + "&state=" + state,
 		success: function(d){
@@ -330,6 +337,16 @@ var aditl = {
 		    aditl.addMissingData('#price-display');
 		}
   }
+, displayPremier: function(data) {
+  if (data) {
+    var premierdata = eval(data);
+    var premier = premierdata.premier;
+    $('#premier-display').html("<img class='dataicon' src='assets/img/glyphicons/glyphicons_266_flag.png'>  <span class='dataval'>" + premier + "</span>");
+    
+  } else {
+    aditl.addMissingData('#premier-display');
+  }
+}
 , formatNumber: function(num) {
    if (num) {
 	  	var str = num.split('.');

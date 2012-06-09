@@ -34,12 +34,13 @@ public class MongoDBAPI
   
   private static Mongo _mongo;
   private static final String DATABASE_NAME = "test";
-  private static final String COLLECTION_POPULATION = "population";
-  private static final String COLLECTION_TEMPERATURE = "temperature";
   private static final String COLLECTION_CPI = "cpi";
-  private static final String COLLECTION_PHOTOSEARCH = "photosearch";
   private static final String COLLECTION_GOVERNMENT = "government";
+  private static final String COLLECTION_PHOTOSEARCH = "photosearch";
+  private static final String COLLECTION_POPULATION = "population";
+  private static final String COLLECTION_PREMIER = "premier";
   private static final String COLLECTION_RAINFALL = "rainfall";
+  private static final String COLLECTION_TEMPERATURE = "temperature";
   
   static {
     if (_mongo == null) {
@@ -168,6 +169,29 @@ public class MongoDBAPI
     
     BasicDBObject query = new BasicDBObject();
     query.put("start.date", new BasicDBObject("$lte", date));
+    
+    DBCursor cur = coll.find(query);
+    cur.sort(new BasicDBObject("start.date", -1)); //.limit(1);
+    
+    DBObject doc = null;
+    if (cur.hasNext()) {
+      doc = cur.next();
+      return doc.toString();
+    }
+    
+    return "";
+  }
+  
+  public static String getPremier(String date, String state)
+  {
+    date = date.replaceAll("-", "");
+    
+    DB db = _mongo.getDB(DATABASE_NAME);
+    DBCollection coll = db.getCollection(COLLECTION_PREMIER);
+    
+    BasicDBObject query = new BasicDBObject();
+    query.put("start.date", new BasicDBObject("$lte", date));
+    query.put("state", "" + state);
     
     DBCursor cur = coll.find(query);
     cur.sort(new BasicDBObject("start.date", -1)); //.limit(1);
