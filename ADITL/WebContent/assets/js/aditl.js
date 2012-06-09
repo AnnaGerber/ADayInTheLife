@@ -371,7 +371,10 @@ var aditl = {
   } 
 };
 
-$(window).load(function() {
+$(document).ready(function() {
+  // Bind the date picker widget to the input box.
+  // This MUST happen before the hashchange is fired else the input doesnt update correctly first time.
+  $( "#datepicker" ).datepicker({ dateFormat: "dd MM yy", changeYear: true, yearRange: "1860:2012" });
   // Using the jQuery hashchange plugin, watch for changes to the hash part of the URL
   // and re-query the data.
   $(window).hashchange(function() {
