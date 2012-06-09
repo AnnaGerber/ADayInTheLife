@@ -33,7 +33,8 @@ public class MongoDBAPI
   public static final String TEMPERATURE_MIN = "min";
   public static final String TEMPERATURE_MAX = "max";
   
-  private DB _db;
+  private static DB _db;
+  private static final String DATABASE_NAME = "test";
   private static final String COLLECTION_POPULATION = "population";
   private static final String COLLECTION_TEMPERATURE = "temperature";
   private static final String COLLECTION_CPI = "cpi";
@@ -41,33 +42,19 @@ public class MongoDBAPI
   private static final String COLLECTION_GOVERNMENT = "government";
   private static final String COLLECTION_RAINFALL = "rainfall";
   
-  public static void main(String[] args) {
-    MongoDBAPI m = new MongoDBAPI("test");
-    
-    //System.out.println(m.getCPI("1987-12-02", "AUS"));
-    //System.out.println(m.getMinTemperature("1987-12-02", "NSW"));
-    //System.out.println(m.getMaxTemperature("1987-12-02", "NSW"));
-    //System.out.println(m.getPopulation("1987-12-02", "AUS", "male"));
-    
-    //System.out.println(m.getPrimeMinister("1987-12-02"));
-    
-    //System.out.println(m.getRainfall("1987-12-02", "NSW"));
-  }
-  
-  public MongoDBAPI(String dbName)
-  {
+  static {
     Mongo m;
     try {
       m = new Mongo();
-      _db = m.getDB(dbName);
+      _db = m.getDB(DATABASE_NAME);
     } catch (UnknownHostException e) {
       e.printStackTrace();
     } catch (MongoException e) {
       e.printStackTrace();
-    }
+    } 
   }
   
-  public String getCPI(String date, String state) {
+  public static String getCPI(String date, String state) {
     DBCollection coll = _db.getCollection(COLLECTION_CPI);
     
     BasicDBObject query = new BasicDBObject();
@@ -83,7 +70,7 @@ public class MongoDBAPI
     return getValue(doc, state);
   }
   
-  private String getTemperature(String date, String state, String bound)
+  private static String getTemperature(String date, String state, String bound)
   {
     DBCollection coll = _db.getCollection(COLLECTION_TEMPERATURE);
     
@@ -106,17 +93,17 @@ public class MongoDBAPI
     return getValue(doc, bound);
   }
   
-  public String getMinTemperature(String date, String state)
+  public static String getMinTemperature(String date, String state)
   {
     return getTemperature(date, state, TEMPERATURE_MIN);
   }
   
-  public String getMaxTemperature(String date, String state)
+  public static String getMaxTemperature(String date, String state)
   {
     return getTemperature(date, state, TEMPERATURE_MAX);
   }
   
-  public String getPopulation(String date, String state, String gender) 
+  public static String getPopulation(String date, String state, String gender) 
   {
     DBCollection coll = _db.getCollection(COLLECTION_POPULATION);
     
@@ -135,7 +122,7 @@ public class MongoDBAPI
     return getValue(doc, state, gender);
   }
   
-  public String getPhotoList(String date, String keyword)
+  public static String getPhotoList(String date, String keyword)
   {
     DBCollection coll = _db.getCollection(COLLECTION_PHOTOSEARCH);
     
@@ -169,10 +156,9 @@ public class MongoDBAPI
     return sb.toString();
   }
   
-  public String getPrimeMinister(String date)
+  public static String getPrimeMinister(String date)
   {
     date = date.replaceAll("-", "");
-    System.out.println(date);
     
     DBCollection coll = _db.getCollection(COLLECTION_GOVERNMENT);
     
@@ -190,7 +176,7 @@ public class MongoDBAPI
     return doc.toString();
   }
   
-  public String getRainfall(String date, String state)
+  public static String getRainfall(String date, String state)
   {
     DBCollection coll = _db.getCollection(COLLECTION_RAINFALL);
     
@@ -213,7 +199,7 @@ public class MongoDBAPI
     return getValue(doc, "rainfall");
   }
   
-  private String getValue(DBObject doc, String path)
+  private static String getValue(DBObject doc, String path)
   {
     if (doc == null) {
       return "";
@@ -235,7 +221,7 @@ public class MongoDBAPI
     return "";
   }
   
-  private String getValue(DBObject doc, String path, String path2)
+  private static String getValue(DBObject doc, String path, String path2)
   {
     if (doc == null) {
       return "";
@@ -257,15 +243,15 @@ public class MongoDBAPI
     return "";
   }
   
-  private int getYear(String date) {
+  private static int getYear(String date) {
     return Integer.parseInt(date.split("-")[0]);
   }
   
-  private int getMonth(String date) {
+  private static int getMonth(String date) {
     return Integer.parseInt(date.split("-")[1]);
   }
   
-  private int getDay(String date) {
+  private static int getDay(String date) {
     return Integer.parseInt(date.split("-")[2]);
   }
 }

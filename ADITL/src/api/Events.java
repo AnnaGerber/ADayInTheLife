@@ -17,25 +17,17 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Properties;
-/**
- * Servlet implementation class Events
- */
+
 @WebServlet("/Events")
-public class Events extends HttpServlet {
+public class Events extends HttpServlet
+{
 	private static final long serialVersionUID = 1L;
     
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public Events() {
-        super();
-      
-    }
-
 	/**
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+	{
 		PrintWriter out = response.getWriter();
 		response.setContentType("application/json");
 		
@@ -51,23 +43,14 @@ public class Events extends HttpServlet {
 		conn.setRequestMethod("GET");
 		//conn.setRequestProperty("Accept", "application/json");
     
-	    String line;
-	    String result = "";
-	    BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-	    while ((line = rd.readLine()) != null) {
-	       result += line;
-	    }
-	    rd.close();
-	    // results may be alternate display names for same person, so will need to filter these out in client
-	    out.print(result);
-
+	  String line;
+	  String result = "";
+	  BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+	  while ((line = rd.readLine()) != null) {
+	    result += line;
+	  }
+	  rd.close();
+	  // results may be alternate display names for same person, so will need to filter these out in client
+	  out.print(result);
 	}
-
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-	}
-
 }

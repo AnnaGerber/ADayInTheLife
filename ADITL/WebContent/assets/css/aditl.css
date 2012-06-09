@@ -1,3 +1,45 @@
+body {
+  padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+  font-family:  'Gudea', "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+.item {
+  float:left;
+  margin:12px;
+}
+.caption {
+  text-align:center;
+  font-style:italic;
+  font-size:smaller;
+}
+.feature {
+  border-right: 1px solid #eee;
+}
+.sidebar {
+  padding-left:1em;
+  max-width:200px;    
+}
+.dataicon {
+  margin-top:-10px;
+}
+.dataval {
+  display: inline-block;
+  font-size: 24px;
+  line-height: 35px;
+  font-weight:bold;   
+  rendering: optimizelegibility;
+}
+#weather-display-max , #weather-display-min{
+  display: inline-block;
+}
+.prevnextnav {
+  border-right: 1px solid #eee;
+}
+.foot {
+  font-size:smaller;    
+}
+h6 {
+  margin-top:2em;
+}
 .thumbnail {
   float:left;
 }
